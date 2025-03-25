@@ -39,7 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-service-key.json
+service_key.json
 
 # clerk configuration (can include secrets)
 /.clerk/
