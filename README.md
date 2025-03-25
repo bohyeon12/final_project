@@ -1,43 +1,43 @@
 # final_project
 
-1 ±ê¿¡¼­ ÇÁ·ÎÁ§Æ® °¡Á®¿À±â
+1 ê¹ƒì—ì„œ í”„ë¡œì íŠ¸ ê°€ì ¸ì˜¤ê¸°
 git clone https://github.com/bohyeon12/final_project.git
 
-2 Node.js°¡ ¾ø´Ù¸é ¼³Ä¡ 
+2 Node.jsê°€ ì—†ë‹¤ë©´ ì„¤ì¹˜ 
 https://nodejs.org/ko/download
 
-3 notion-clone Æú´õ¿¡¼­ °ü¸®ÀÚ±ÇÇÑÀ¸·Î cmd ½ÇÇà
+3 notion-clone í´ë”ì—ì„œ ê´€ë¦¬ìžê¶Œí•œìœ¼ë¡œ cmd ì‹¤í–‰
 
-4 Clerk API »ç¿ëÀ» À§ÇÑ ÁØºñ
-https://clerk.com/ ¿¡¼­ È¸¿ø°¡ÀÔ
-cmd¿¡ npm install @clerk/nextjs ÀÔ·Â
-.env.local ÆÄÀÏ ¸¸µé±â
-Clerk dashboard -> configure -> API key ¿¡¼­ APIÅ° °¡Á®¿À°í .env.local¿¡ ºÙ¿©³Ö±â
-configure -> sessions -> Customize session token ¿¡¼­ edit Å¬¸¯ÇÏ°í 
+4 Clerk API ì‚¬ìš©ì„ ìœ„í•œ ì¤€ë¹„
+https://clerk.com/ ì—ì„œ íšŒì›ê°€ìž…
+cmdì— npm install @clerk/nextjs ìž…ë ¥
+.env.local íŒŒì¼ ë§Œë“¤ê¸°
+Clerk dashboard -> configure -> API key ì—ì„œ APIí‚¤ ê°€ì ¸ì˜¤ê³  .env.localì— ë¶™ì—¬ë„£ê¸°
+configure -> sessions -> Customize session token ì—ì„œ edit í´ë¦­í•˜ê³  
 {
 	"email": "{{user.primary_email_address}}",
 	"image": "{{user.image_url}}",
 	"fullName": "{{user.full_name}}"
 }
-ºÙ¿©³Ö±â
+ë¶™ì—¬ë„£ê¸°
 
-5 shadcn »ç¿ëÀ» À§ÇÑ ÁØºñ
+5 shadcn ì‚¬ìš©ì„ ìœ„í•œ ì¤€ë¹„
 npx shadcn@latest init -> Default -> css variables yes
 
-6 Firebase API »ç¿ëÀ» À§ÇÑ ÁØºñ 
-cmd¿¡ npm install firebase ,
-npm install firebase-admin ÀÔ·Â
-https://firebase.google.com/?hl=ko ¿¡¼­ È¸¿ø°¡ÀÔ
-ÇÁ·ÎÁ§Æ® »ý¼º 
-ÁÖ¾îÁö´Â SDK ÄÚµåÀÇ const firebaseConfig = { ... } Áß ...¿¡ ÇØ´çÇÏ´Â ºÎºÐ¸¸ º¹»çÇØ¼­ ºÙ¿©³Ö±â
-Firebase È¨ÆäÀÌÁö¿¡¼­ ¸¸µç ÇÁ·ÎÁ§Æ®¿¡ µé¾î°¡ setting -> service accounts -> Generate new service key Å¬¸¯
-´Ù¿î·Îµå ¹ÞÀº key ÆÄÀÏÀ» ÇÁ·ÎÁ§Æ®¾È¿¡ °¡Á®¿À°í ÆÄÀÏÀÌ¸§À» service_key.json À¸·Î ¼öÁ¤
+6 Firebase API ì‚¬ìš©ì„ ìœ„í•œ ì¤€ë¹„ 
+cmdì— npm install firebase ,
+npm install firebase-admin ìž…ë ¥
+https://firebase.google.com/?hl=ko ì—ì„œ íšŒì›ê°€ìž…
+í”„ë¡œì íŠ¸ ìƒì„± 
+ì£¼ì–´ì§€ëŠ” SDK ì½”ë“œì˜ const firebaseConfig = { ... } ì¤‘ ...ì— í•´ë‹¹í•˜ëŠ” ë¶€ë¶„ë§Œ ë³µì‚¬í•´ì„œ ë¶™ì—¬ë„£ê¸°
+Firebase í™ˆíŽ˜ì´ì§€ì—ì„œ ë§Œë“  í”„ë¡œì íŠ¸ì— ë“¤ì–´ê°€ setting -> service accounts -> Generate new service key í´ë¦­
+ë‹¤ìš´ë¡œë“œ ë°›ì€ key íŒŒì¼ì„ í”„ë¡œì íŠ¸ì•ˆì— ê°€ì ¸ì˜¤ê³  íŒŒì¼ì´ë¦„ì„ service_key.json ìœ¼ë¡œ ìˆ˜ì •
 
-7 liveblock »ç¿ëÀ» À§ÇÑ ÁØºñ
-cmd¿¡ npm install @liveblocks/client @liveblocks/react @liveblocks/react-ui @liveblocks/react-blocknote @blocknote/core @blocknote/react @blocknote/mantine ÀÔ·Â
-npx create-liveblocks-app@latest --init --framework react µµ ÀÔ·Â
-https://liveblocks.io/ ¿¡ Á¢¼Ó -> Dashboard -> create project -> API key º¹»ç
-.env.local¿¡¼­ 
+7 liveblock ì‚¬ìš©ì„ ìœ„í•œ ì¤€ë¹„
+cmdì— npm install @liveblocks/client @liveblocks/react @liveblocks/react-ui @liveblocks/react-blocknote @blocknote/core @blocknote/react @blocknote/mantine ìž…ë ¥
+npx create-liveblocks-app@latest --init --framework react ë„ ìž…ë ¥
+https://liveblocks.io/ ì— ì ‘ì† -> Dashboard -> create project -> API key ë³µì‚¬
+.env.localì—ì„œ 
 NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY=
 LIVEBLOCKS_PRIVATE_KEY=
-À§ º¯¼öµéÀ» public key¿Í private key¿¡ ÇØ´çÇÏ´Â Å°°ªÀ¸·Î ÃÊ±âÈ­
+ìœ„ ë³€ìˆ˜ë“¤ì„ public keyì™€ private keyì— í•´ë‹¹í•˜ëŠ” í‚¤ê°’ìœ¼ë¡œ ì´ˆê¸°í™”
