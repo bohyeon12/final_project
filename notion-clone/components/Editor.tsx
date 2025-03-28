@@ -26,7 +26,7 @@ function BlockNote({doc, provider, darkMode} : EditorProps){
             provider,
             fragment : doc.getXmlFragment("document-store"),
             user : {
-                name: userInfo?.name || "Anonymous", // ? Provide a default name
+                name: userInfo?.name || userInfo?.email || "Anonymous", // ? Provide a default name
                 color: stringToColor(userInfo?.email || "default@email.com"), // ? Provide a default email
             
             },
