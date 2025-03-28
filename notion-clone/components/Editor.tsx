@@ -7,13 +7,14 @@ import { LiveblocksYjsProvider } from "@liveblocks/yjs";
 import { MoonIcon, SunIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import { BlockNoteView } from "@blocknote/shadcn";
-import { BlockNoteEditor } from "@blocknote/core";
-import { useCreateBlockNote } from "@blocknote/react";
+import { BlockNoteSchema, filterSuggestionItems, defaultBlockSpecs } from "@blocknote/core";
+import { SuggestionMenuController, useCreateBlockNote } from "@blocknote/react";
 import "@blocknote/core/fonts/inter.css";
 import "@blocknote/shadcn/style.css";
 import { useSelf } from "@liveblocks/react";
 import stringToColor from "@/lib/stringToColor";
-import { useTranslation } from "react-i18next";
+import { YouTubeBlock } from "./YouTubeBlock";
+import { getDefaultReactSlashMenuItems } from "@blocknote/react";
 
 type EditorProps = {
   doc: Y.Doc;
@@ -21,29 +22,61 @@ type EditorProps = {
   darkMode: boolean;
 };
 
-function BlockNote({ doc, provider, darkMode }: EditorProps) {
-  const { t } = useTranslation();
-  const userInfo = useSelf((me) => me.info);
-  const editor: BlockNoteEditor = useCreateBlockNote({
-    collaboration: {
-      provider,
-      fragment: doc.getXmlFragment("document-store"),
-      user: {
-        name: userInfo?.name || t("editor.anonymous"), // 익명 표시
-        color: stringToColor(userInfo?.email || "default@email.com"),
-      },
-    },
-  });
+function BlockNote({doc, provider, darkMode} : EditorProps){
+    const userInfo = useSelf((me) => me.info);
+    const editor = useCreateBlockNote({
+        collaboration: {
+            provider,
+            fragment : doc.getXmlFragment("document-store"),
+            user : {
+                name: userInfo?.name || "Anonymous",
+                color: stringToColor(userInfo?.email || "default@email.com"),
+            },
+        },
+        schema: BlockNoteSchema.create({
+            blockSpecs: {
+                ...defaultBlockSpecs,
+                youtube: YouTubeBlock,
+            }
+        })
+    });
 
-  return (
-    <div className="relative max-w-6xl mx-auto">
-      <BlockNoteView
-        editor={editor as BlockNoteEditor}
-        className="min-h-screen"
-        theme={darkMode ? "dark" : "light"}
-      />
-    </div>
-  );
+    return (
+        <div className="relative max-w-6xl mx-auto">
+            <BlockNoteView 
+            editor={editor}
+            className="min-h-screen"
+            theme={darkMode ? "dark" : "light"}
+            slashMenu={false} // Disable the default slash menu
+            >
+            <SuggestionMenuController
+                triggerCharacter={"/"} // Trigger character for the slash menu
+                getItems={async (query) => {
+                const defaultItems = getDefaultReactSlashMenuItems(editor);
+                const youtubeItem = {
+                    title: "YouTube",
+                    onItemClick: () => {
+                    const url = prompt("Enter YouTube URL:");
+                    if (url) {
+                        editor.insertBlocks(
+                        [
+                            {
+                            type: "youtube",
+                            props: { url },
+                            },
+                        ],
+                        editor.getTextCursorPosition().block,
+                        "after"
+                        );
+                    }
+                    },
+                };
+                return filterSuggestionItems([...defaultItems, youtubeItem], query);
+                }}
+            />
+            </BlockNoteView>
+        </div>
+    );
 }
 
 function Editor() {
