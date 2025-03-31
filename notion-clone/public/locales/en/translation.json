@@ -1,0 +1,56 @@
+{
+  "header": {
+    "userSpace": "{{name}}'s Space",
+    "home": "Home"
+  },
+  "sidebar": {
+    "noDocument": "No document found",
+    "myDocuments": "My Documents",
+    "sharedWithMe": "Shared with me",
+    "newDocument": "New Document"
+  },
+  "document": {
+    "updateTitle": "Update",
+    "updateTitleLoading": "Updating..",
+    "invite": "Invite",
+    "delete": "Delete",
+    "userEditing": "User currently editing this page."
+  },
+  "deleteDialog": {
+    "title": "Are you absolutely sure?",
+    "deleting": "Deleting.."
+  },
+  "common": {
+    "close": "Close"
+  },
+  "breadcrumbs": {
+    "home": "Home"
+  },
+  "avatars": {
+    "you": "You",
+    "editing": "User currently editing this page."
+  },
+  "manageUsers": {
+    "userCount": "User",
+    "dialogTitle": "Users with Access",
+    "dialogDesc": "Below is a list of users who have access to this document.",
+    "owner": "owner",
+    "editor": "editor",
+    "removing": "Removing"
+  },
+  "inviteUser": {
+    "inviting": "Inviting..",
+    "invite": "Invite",
+    "inviteSuccess": "Invited User successfully",
+    "inviteFail": "Failed to invite user",
+    "email": "Email",
+    "dialogTitle": "Invite a User to collaborate",
+    "dialogDesc": "Enter the email of the user you want to invite."
+  },
+  "followPointer": {
+    "defaultName": "Anonymous"
+  },
+  "editor": {
+    "anonymous": "Anonymous"
+  }
+}

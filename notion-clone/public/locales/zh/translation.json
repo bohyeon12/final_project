@@ -1,0 +1,56 @@
+{
+  "header": {
+    "userSpace": "{{name}}的空间",
+    "home": "首页"
+  },
+  "sidebar": {
+    "noDocument": "没有找到文件",
+    "myDocuments": "我的文件",
+    "sharedWithMe": "共享给我",
+    "newDocument": "新建文件"
+  },
+  "document": {
+    "updateTitle": "更新",
+    "updateTitleLoading": "正在更新..",
+    "invite": "邀请",
+    "delete": "删除",
+    "userEditing": "正在编辑此页面的用户"
+  },
+  "deleteDialog": {
+    "title": "确定要删除吗？",
+    "deleting": "正在删除.."
+  },
+  "common": {
+    "close": "关闭"
+  },
+  "breadcrumbs": {
+    "home": "首页"
+  },
+  "avatars": {
+    "you": "你",
+    "editing": "正在编辑此页面"
+  },
+  "manageUsers": {
+    "userCount": "用户",
+    "dialogTitle": "拥有访问权限的用户",
+    "dialogDesc": "以下是有权访问此文档的用户列表。",
+    "owner": "所有者",
+    "editor": "编辑者",
+    "removing": "正在移除"
+  },
+  "inviteUser": {
+    "inviting": "邀请中..",
+    "invite": "邀请",
+    "inviteSuccess": "成功邀请用户",
+    "inviteFail": "邀请用户失败",
+    "email": "邮箱",
+    "dialogTitle": "邀请用户协作",
+    "dialogDesc": "输入要邀请的用户邮箱地址。"
+  },
+  "followPointer": {
+    "defaultName": "匿名"
+  },
+  "editor": {
+    "anonymous": "匿名"
+  }
+}
