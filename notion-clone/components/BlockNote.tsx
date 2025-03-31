@@ -10,7 +10,7 @@ import { useSelf } from "@liveblocks/react";
 import { YouTubeBlock } from "./YouTubeBlock";
 import { useRef } from "react";
 import { BlockNoteView } from "@blocknote/shadcn";
-import { ImageBlock } from "./ImageBlock";
+
 type EditorProps = {
     doc: Y.Doc;
     provider: any;
@@ -47,7 +47,6 @@ function BlockNote({doc, provider, darkMode, isDrawingEnabled, strokeColor, stro
             blockSpecs: {
                 ...defaultBlockSpecs,
                 youtube: YouTubeBlock,
-                image: ImageBlock,
             }
         }),
     });

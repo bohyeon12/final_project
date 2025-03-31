@@ -21,7 +21,7 @@ function Editor() {
     const [strokeWidth, setStrokeWidth] = useState(2);
 
     
-    useEffect(() => {
+    useEffect(() => {   
         const yDoc = new Y.Doc();
         const yProvider = new LiveblocksYjsProvider(room,yDoc);
         setDoc(yDoc);
@@ -123,6 +123,7 @@ function Editor() {
             isDrawingEnabled={isDrawingEnabled}
             strokeColor={strokeColor}
             strokeWidth={strokeWidth}
+            key={room.id}
         />
     </div>
   );
