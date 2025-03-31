@@ -10,6 +10,7 @@ export const YouTubeBlock = createReactBlockSpec(
     },
     content: "inline",
     onResize: true,
+    draggable: true,
   },
   {
     render: ({ block }) => {
