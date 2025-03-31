@@ -1,15 +1,15 @@
-'use client'
+import Document from "@/components/Document";
 
-import Document from "@/components/Document"
-import { use } from "react";
+export default async function DocumentPage({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const { id } = await Promise.resolve(params); //params 오류 회피
 
-function DocumentPage({ params }: { params: Promise<{ id: string }> }) {
-  const {id} = use(params);
-    return (
+  return (
     <div className="flex flex-col flex-1 min-h-screen">
-      <Document id={id}/> 
-    </div> 
-  )
+      <Document id={id} />
+    </div>
+  );
 }
-
-export default DocumentPage
