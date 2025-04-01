@@ -12,6 +12,9 @@ import { useUser } from '@clerk/nextjs';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import { PlusCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import VideoShareModal from '@/components/ui/VideoShareModal';
 
 type Video = {
   id: string;
@@ -26,6 +29,8 @@ export default function VideoListPage() {
   const [videos, setVideos] = useState<Video[]>([]);
   const [url, setUrl] = useState('');
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+  const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
 
   const fetchVideos = async () => {
     const snapshot = await getDocs(collection(db, 'videos'));
@@ -87,7 +92,6 @@ export default function VideoListPage() {
     <div className="max-w-4xl mx-auto p-6 space-y-8">
       <h1 className="text-2xl font-bold">🎥 Video Gallery</h1>
 
-      {/* 업로드 폼 */}
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input
           placeholder="YouTube URL"
@@ -101,27 +105,46 @@ export default function VideoListPage() {
 
       <hr />
 
-      {/* 목록 */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {videos.map((video) => {
           const videoId = extractYouTubeId(video.url);
           return (
-            <Link
+            <div
               key={video.id}
-              href={`/videos/${video.id}`}
               className="border rounded-lg p-3 shadow hover:shadow-md transition"
             >
-              <img
-                src={`https://img.youtube.com/vi/${videoId}/0.jpg`}
-                alt={video.title}
-                className="w-full rounded-md mb-2"
-              />
+              <Link href={`/videos/${video.id}`}>
+                <img
+                  src={`https://img.youtube.com/vi/${videoId}/0.jpg`}
+                  alt={video.title}
+                  className="w-full rounded-md mb-2"
+                />
+              </Link>
               <h2 className="font-semibold">{video.title}</h2>
               <p className="text-sm text-gray-500">{video.createdBy}</p>
-            </Link>
+
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSelectedVideo(video)}
+                className="mt-2 flex items-center gap-1"
+              >
+                <PlusCircle className="w-4 h-4" />
+                내 문서에 추가
+              </Button>
+            </div>
           );
         })}
       </div>
+
+      {/* 공유용 모달 */}
+      {selectedVideo && (
+        <VideoShareModal
+          open={!!selectedVideo}
+          onClose={() => setSelectedVideo(null)}
+          youtubeUrl={selectedVideo.url}
+        />
+      )}
     </div>
   );
 }
