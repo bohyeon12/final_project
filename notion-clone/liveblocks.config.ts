@@ -5,11 +5,7 @@ declare global {
     // Each user's Presence, for useMyPresence, useOthers, etc.
     Presence: {
       // Example, real-time cursor coordinates
-<<<<<<< HEAD
-      // cursor: { x: number; y: number };
-=======
       cursor: { x: number; y: number } | null;
->>>>>>> c350f983adaabd5b47b386329954a82136268f6f
     };
 
     // The Storage tree for the room, for useMutation, useStorage, etc.
@@ -23,13 +19,9 @@ declare global {
       id: string;
       info: {
         // Example properties, for useSelf, useUser, useOthers, etc.
-<<<<<<< HEAD
-        // name: string;
-=======
         name: string;
         email:string;
         avatar:string;
->>>>>>> c350f983adaabd5b47b386329954a82136268f6f
         // avatar: string;
       };
     };
@@ -38,11 +30,7 @@ declare global {
     RoomEvent: {};
       // Example has two events, using a union
       // | { type: "PLAY" } 
-<<<<<<< HEAD
-      // | { type: "REACTION"; emoji: "ðŸ”¥" };
-=======
-      // | { type: "REACTION"; emoji: "?Ÿ”?" };
->>>>>>> c350f983adaabd5b47b386329954a82136268f6f
+      // | { type: "REACTION"; emoji: "?ï¿½ï¿½?" };
 
     // Custom metadata set on threads, for useThreads, useCreateThread, etc.
     ThreadMetadata: {

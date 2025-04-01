@@ -1,20 +1,3 @@
-<<<<<<< HEAD
-'use client'
-
-import Document from "@/components/Document"
-import { use } from "react";
-
-function DocumentPage({ params }: { params: Promise<{ id: string }> }) {
-  const {id} = use(params);
-    return (
-    <div className="flex flex-col flex-1 min-h-screen">
-      <Document id={id}/> 
-    </div> 
-  )
-}
-
-export default DocumentPage
-=======
 import Document from "@/components/Document";
 
 export default async function DocumentPage({
@@ -30,4 +13,3 @@ export default async function DocumentPage({
     </div>
   );
 }
->>>>>>> c350f983adaabd5b47b386329954a82136268f6f

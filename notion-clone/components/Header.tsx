@@ -1,36 +1,3 @@
-<<<<<<< HEAD
-'use client'
-
-import { SignedIn, SignedOut, SignInButton, UserButton, useUser } from "@clerk/nextjs";
-import Breadcrumbs from "./Breadcrumbs";
- 
-function Header() {
-    const {user} = useUser();
-  return (
-    <div className="flex items-center justify-between p-5">
-      {user &&(
-        <h1>
-            {user?.firstName}
-            {`'s`} Space
-        </h1>
-      )}
-
-      <Breadcrumbs/>
-
-      <div>
-        <SignedOut>
-            <SignInButton /> 
-        </SignedOut>
-        <SignedIn>
-            <UserButton />
-        </SignedIn>
-      </div>
-    </div>
-  )
-}
-
-export default Header
-=======
 // components/Header.tsx
 "use client";
 
@@ -91,4 +58,3 @@ function Header() {
 }
 
 export default Header;
->>>>>>> c350f983adaabd5b47b386329954a82136268f6f
