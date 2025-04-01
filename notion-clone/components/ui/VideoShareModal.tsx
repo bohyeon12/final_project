@@ -134,7 +134,7 @@ export default function VideoShareModal({ open, onClose, youtubeUrl }: Props) {
                   <hr className="my-4" />
 
                   <Button
-                    className="w-full bg-blue-600 text-white hover:bg-blue-700"
+                    className="w-full"
                     onClick={handleCreateNew}
                   >
                     ➕ 새 문서로 만들기

@@ -227,23 +227,36 @@ function BlockNote({
     });
   };
 
-  // ✅ YouTube URL 자동 삽입 처리
-  useEffect(() => {
-    if (youtubeUrlForInsert && editor && onYoutubeInserted) {
-      queueMicrotask(() => {
-        editor.insertBlocks(
-          [{
+  const hasInserted = useRef(false);
+
+useEffect(() => {
+  if (
+    youtubeUrlForInsert &&
+    editor &&
+    onYoutubeInserted &&
+    !hasInserted.current
+  ) {
+    // ✅ 에디터가 mount 후 ready일 때만 삽입
+    const timeout = setTimeout(() => {
+      editor.insertBlocks(
+        [
+          {
             type: "youtube",
             props: { url: youtubeUrlForInsert },
-          }],
-          editor.getTextCursorPosition().block,
-          "after"
-        );
-        onYoutubeInserted();
-      });
-    }
-  }, [youtubeUrlForInsert, editor, onYoutubeInserted]);
+          },
+        ],
+        editor.getTextCursorPosition().block,
+        "after"
+      );
+      hasInserted.current = true;
+      onYoutubeInserted(); // URL 초기화
+    }, 100); // 조금 늦춰서 실행
 
+    return () => clearTimeout(timeout);
+  }
+}, [youtubeUrlForInsert, editor, onYoutubeInserted]);
+
+  
   return (
     <div className="relative max-w-6xl mx-auto">
       <canvas
