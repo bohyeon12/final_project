@@ -1,10 +1,6 @@
 import { adminDb } from "@/firebase-admin";
 import liveblocks from "@/lib/liveblocks";
 import { auth } from "@clerk/nextjs/server";
-<<<<<<< HEAD
-import { QueryDocumentSnapshot } from "firebase/firestore";
-=======
->>>>>>> c350f983adaabd5b47b386329954a82136268f6f
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req:NextRequest) {

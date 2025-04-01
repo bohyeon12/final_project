@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
@@ -43,3 +44,6 @@ service_key.json
 
 # clerk configuration (can include secrets)
 /.clerk/
+=======
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+>>>>>>> c350f983adaabd5b47b386329954a82136268f6f

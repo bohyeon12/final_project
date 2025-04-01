@@ -1,0 +1,56 @@
+{
+  "header": {
+    "userSpace": "{{name}}のスペース",
+    "home": "ホーム"
+  },
+  "sidebar": {
+    "noDocument": "ドキュメントがありません",
+    "myDocuments": "マイ ドキュメント",
+    "sharedWithMe": "共有されたドキュメント",
+    "newDocument": "新規ドキュメント"
+  },
+  "document": {
+    "updateTitle": "更新",
+    "updateTitleLoading": "更新中..",
+    "invite": "招待",
+    "delete": "削除",
+    "userEditing": "このページを編集中のユーザー"
+  },
+  "deleteDialog": {
+    "title": "本当に削除しますか？",
+    "deleting": "削除中.."
+  },
+  "common": {
+    "close": "閉じる"
+  },
+  "breadcrumbs": {
+    "home": "ホーム"
+  },
+  "avatars": {
+    "you": "自分",
+    "editing": "このページを編集中"
+  },
+  "manageUsers": {
+    "userCount": "ユーザー",
+    "dialogTitle": "アクセス権を持つユーザー",
+    "dialogDesc": "このドキュメントにアクセスできるユーザーのリストです。",
+    "owner": "オーナー",
+    "editor": "編集者",
+    "removing": "削除中"
+  },
+  "inviteUser": {
+    "inviting": "招待中..",
+    "invite": "招待",
+    "inviteSuccess": "ユーザーを招待しました",
+    "inviteFail": "ユーザーの招待に失敗しました",
+    "email": "メール",
+    "dialogTitle": "ユーザーを招待",
+    "dialogDesc": "招待したいユーザーのメールアドレスを入力してください。"
+  },
+  "followPointer": {
+    "defaultName": "匿名"
+  },
+  "editor": {
+    "anonymous": "匿名"
+  }
+}

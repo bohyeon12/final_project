@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 'use client'
 
 import {useOthers, useSelf} from '@liveblocks/react/suspense'
@@ -43,3 +44,46 @@ function Avatars() {
 }
 
 export default Avatars
+=======
+"use client";
+
+import { useOthers, useSelf } from "@liveblocks/react/suspense";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useTranslation } from "react-i18next";
+
+function Avatars() {
+  const others = useOthers();
+  const self = useSelf();
+  const { t } = useTranslation();
+
+  const all = [self, ...others];
+
+  return (
+    <div className="flex gap-2 items-center">
+      <p className="font-light text-sm">{t("document.userEditing")}</p>
+      <div className="flex -space-x-5">
+        {all.map((other, i) => (
+          <TooltipProvider key={other?.connectionId ?? i}>
+            <Tooltip>
+              <TooltipTrigger>
+                <Avatar className="border-2 hover:z-50">
+                  <AvatarImage src={other?.info.avatar} />
+                  <AvatarFallback>{other?.info.name}</AvatarFallback>
+                </Avatar>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>
+                  {self?.id === other?.id ? t("avatars.you") : other?.info.name}
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default Avatars;
+>>>>>>> c350f983adaabd5b47b386329954a82136268f6f
