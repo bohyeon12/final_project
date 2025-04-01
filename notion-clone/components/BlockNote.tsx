@@ -10,6 +10,7 @@ import { YouTubeBlock } from "./YouTubeBlock";
 import { ImageBlock } from "./ImageBlock";
 import { BlockNoteView } from "@blocknote/shadcn";
 import { deleteImage, handleImageUpload } from "@/actions/actions";
+import { YoutubeTimestamp } from "./YoutubeTimestamp"; // 추가된 YoutubeTimestamp 컴포넌트
 
 type EditorProps = {
   doc: Y.Doc;
@@ -60,6 +61,7 @@ function BlockNote({
         ...defaultBlockSpecs,
         youtube: YouTubeBlock,
         image: ImageBlock,
+        youtubetimestamp: YoutubeTimestamp, // YoutubeTimestamp 블록 추가
       },
     }),
   });
@@ -229,34 +231,32 @@ function BlockNote({
 
   const hasInserted = useRef(false);
 
-useEffect(() => {
-  if (
-    youtubeUrlForInsert &&
-    editor &&
-    onYoutubeInserted &&
-    !hasInserted.current
-  ) {
-    // ✅ 에디터가 mount 후 ready일 때만 삽입
-    const timeout = setTimeout(() => {
-      editor.insertBlocks(
-        [
-          {
-            type: "youtube",
-            props: { url: youtubeUrlForInsert },
-          },
-        ],
-        editor.getTextCursorPosition().block,
-        "after"
-      );
-      hasInserted.current = true;
-      onYoutubeInserted(); // URL 초기화
-    }, 100); // 조금 늦춰서 실행
+  useEffect(() => {
+    if (
+      youtubeUrlForInsert &&
+      editor &&
+      onYoutubeInserted &&
+      !hasInserted.current
+    ) {
+      const timeout = setTimeout(() => {
+        editor.insertBlocks(
+          [
+            {
+              type: "youtube",
+              props: { url: youtubeUrlForInsert },
+            },
+          ],
+          editor.getTextCursorPosition().block,
+          "after"
+        );
+        hasInserted.current = true;
+        onYoutubeInserted();
+      }, 100);
 
-    return () => clearTimeout(timeout);
-  }
-}, [youtubeUrlForInsert, editor, onYoutubeInserted]);
+      return () => clearTimeout(timeout);
+    }
+  }, [youtubeUrlForInsert, editor, onYoutubeInserted]);
 
-  
   return (
     <div className="relative max-w-6xl mx-auto">
       <canvas
@@ -288,6 +288,25 @@ useEffect(() => {
                     [
                       {
                         type: "youtube",
+                        props: { url },
+                      },
+                    ],
+                    editor.getTextCursorPosition().block,
+                    "after"
+                  );
+                }
+              },
+            };
+
+            const youtubeTimestampItem = {
+              title: "YouTube Timestamp",
+              onItemClick: () => {
+                const url = prompt("불러올 URL을 입력하세요.");
+                if (url) {
+                  editor.insertBlocks(
+                    [
+                      {
+                        type: "youtubetimestamp",
                         props: { url },
                       },
                     ],
@@ -338,8 +357,10 @@ useEffect(() => {
                 input.click();
               },
             };
-
-            return filterSuggestionItems([...defaultItems, youtubeItem, imageItem], query);
+            return filterSuggestionItems(
+              [...defaultItems, youtubeItem, youtubeTimestampItem, imageItem],
+              query
+            );
           }}
         />
       </BlockNoteView>
