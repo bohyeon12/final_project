@@ -30,7 +30,7 @@ declare global {
     RoomEvent: {};
       // Example has two events, using a union
       // | { type: "PLAY" } 
-      // | { type: "REACTION"; emoji: "?Ÿ”?" };
+      // | { type: "REACTION"; emoji: "?ï¿½ï¿½?" };
 
     // Custom metadata set on threads, for useThreads, useCreateThread, etc.
     ThreadMetadata: {
