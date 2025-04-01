@@ -6,10 +6,12 @@ import { useEffect, useState } from "react";
 import { SuggestionMenuController, useCreateBlockNote } from "@blocknote/react";
 import * as Y from "yjs";
 
-import { useSelf } from "@liveblocks/react";
+import { useRoom, useSelf } from "@liveblocks/react";
 import { YouTubeBlock } from "./YouTubeBlock";
+import { ImageBlock } from "./ImageBlock";
 import { useRef } from "react";
 import { BlockNoteView } from "@blocknote/shadcn";
+import { deleteImage, handleImageUpload } from "@/actions/actions";
 
 type EditorProps = {
     doc: Y.Doc;
@@ -31,9 +33,9 @@ type DrawingState = {
     color: string;
     width: number;
   };
-  
 function BlockNote({doc, provider, darkMode, isDrawingEnabled, strokeColor, strokeWidth} : EditorProps){
     const userInfo = useSelf((me) => me.info);
+    const room = useRoom();
     const editor = useCreateBlockNote({
         collaboration: {
             provider,
@@ -47,6 +49,7 @@ function BlockNote({doc, provider, darkMode, isDrawingEnabled, strokeColor, stro
             blockSpecs: {
                 ...defaultBlockSpecs,
                 youtube: YouTubeBlock,
+                image: ImageBlock,
             }
         }),
     });
@@ -60,7 +63,14 @@ function BlockNote({doc, provider, darkMode, isDrawingEnabled, strokeColor, stro
 
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
-
+        editor._tiptapEditor.on('transaction', ({ editor }) => {
+            const removedBlocks = editor.getJSON().content?.filter(block => 
+                block.type === 'live-image' && block.attrs?.url
+            );
+            removedBlocks?.forEach(block => {
+                deleteImage(block.id);
+            });
+        });
         // Set canvas size to match parent container
         const resizeCanvas = () => {
             const parent = canvas.parentElement;
@@ -184,6 +194,47 @@ function BlockNote({doc, provider, darkMode, isDrawingEnabled, strokeColor, stro
         setDrawing({ ...drawing, isDrawing: false });
     };
 
+    const compressImage = async (file: File): Promise<string> => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target?.result as string;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    if (!ctx) {
+                        reject(new Error('Could not get canvas context'));
+                        return;
+                    }
+
+                    // Calculate new dimensions while maintaining aspect ratio
+                    let width = img.width;
+                    let height = img.height;
+                    const maxSize = 800; // Max dimension
+                    if (width > height && width > maxSize) {
+                        height = Math.round((height * maxSize) / width);
+                        width = maxSize;
+                    } else if (height > maxSize) {
+                        width = Math.round((width * maxSize) / height);
+                        height = maxSize;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // Convert to base64 with reduced quality
+                    const base64 = canvas.toDataURL('image/jpeg', 0.7);
+                    resolve(base64);
+                };
+                img.onerror = reject;
+            };
+            reader.onerror = reject;
+        });
+    };
+
     return (
         <div className="relative max-w-6xl mx-auto">
             <canvas
@@ -203,6 +254,7 @@ function BlockNote({doc, provider, darkMode, isDrawingEnabled, strokeColor, stro
             slashMenu={false} // Disable the default slash menu
             >
             <SuggestionMenuController
+                key={editor.getTextCursorPosition().block.id}
                 triggerCharacter={"/"} // Trigger character for the slash menu
                 getItems={async (query) => {
                 const defaultItems = getDefaultReactSlashMenuItems(editor);
@@ -222,8 +274,47 @@ function BlockNote({doc, provider, darkMode, isDrawingEnabled, strokeColor, stro
                     }
                     },
                 };
-                
-                return filterSuggestionItems([...defaultItems, youtubeItem], query);
+
+                const imageItem = {
+                    title: "Image",
+                    onItemClick: async () => {
+                        const input = document.createElement('input');
+                        input.type = 'file';
+                        input.accept = 'image/*';
+                        
+                        input.onchange = async (e) => {
+                            const file = (e.target as HTMLInputElement).files?.[0];
+                            if (!file) return;
+                            
+                            const blockId = crypto.randomUUID();
+                            try {
+                                const compressedBase64 = await compressImage(file);
+                                const result = await handleImageUpload(compressedBase64, room.id, blockId);
+                                
+                                if (result) {
+                                    editor.insertBlocks(
+                                        [{
+                                            type: "image",
+                                            props: {
+                                                imageUrl: result,
+                                                blockId: blockId,
+                                            }
+                                        }],
+                                        editor.getTextCursorPosition().block,
+                                        "after"
+                                    );
+                                }
+                            } catch (error) {
+                                console.error("Error uploading image:", error);
+                                alert("Failed to upload image. Please try a smaller image or try again.");
+                            }
+                        };
+                        
+                        input.click();
+                    }
+                };
+
+                return filterSuggestionItems([...defaultItems, youtubeItem, imageItem], query);
                 }}
             />
             </BlockNoteView>

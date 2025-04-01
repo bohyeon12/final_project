@@ -1,7 +1,7 @@
 "use client";
 
 import { useRoom } from "@liveblocks/react/suspense";
-import { useEffect, useState, useRef, SetStateAction } from "react";
+import { useEffect, useState } from "react";
 import * as Y from "yjs";
 import {LiveblocksYjsProvider} from "@liveblocks/yjs"
 import { MoonIcon, SunIcon, PencilIcon, EraserIcon, UndoIcon } from "lucide-react";
