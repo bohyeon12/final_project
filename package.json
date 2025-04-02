@@ -1,5 +1,7 @@
 {
   "dependencies": {
+    "@firebase/app": "^0.11.3",
+    "@firebase/app-compat": "^0.2.52",
     "firebase": "^11.5.0",
     "firebase-admin": "^13.2.0",
     "firestore": "^1.1.6",
