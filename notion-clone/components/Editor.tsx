@@ -98,7 +98,7 @@ function Editor() {
                 <span className="text-sm">Width:</span>
                 <Slider
                   value={[strokeWidth]}
-                  onValueChange={(value) => setStrokeWidth(value[0])}
+                  onValueChange={(value : any) => setStrokeWidth(value[0])}
                   min={1}
                   max={20}
                   step={1}

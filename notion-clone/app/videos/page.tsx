@@ -5,14 +5,18 @@ import { db } from '@/firebase';
 import {
   addDoc,
   collection,
+  deleteDoc,
+  doc,
   getDocs,
+  query,
+  where,
   Timestamp,
 } from 'firebase/firestore';
 import { useUser } from '@clerk/nextjs';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import VideoShareModal from '@/components/ui/VideoShareModal';
 
@@ -33,7 +37,13 @@ export default function VideoListPage() {
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
 
   const fetchVideos = async () => {
-    const snapshot = await getDocs(collection(db, 'videos'));
+    if (!user) return;
+
+    const q = query(
+      collection(db, 'videos'),
+      where('createdBy', '==', user.emailAddresses[0].emailAddress)
+    );
+    const snapshot = await getDocs(q);
     const data = snapshot.docs.map((doc) => ({
       id: doc.id,
       ...(doc.data() as Omit<Video, 'id'>),
@@ -42,8 +52,8 @@ export default function VideoListPage() {
   };
 
   useEffect(() => {
-    fetchVideos();
-  }, []);
+    if (user) fetchVideos();
+  }, [user]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -67,6 +77,14 @@ export default function VideoListPage() {
     });
   };
 
+  const handleDelete = async (videoId: string) => {
+    const confirm = window.confirm('정말로 이 영상을 삭제하시겠습니까?');
+    if (!confirm) return;
+
+    await deleteDoc(doc(db, 'videos', videoId));
+    await fetchVideos();
+  };
+
   const fetchYoutubeTitle = async (url: string): Promise<string | null> => {
     const videoId = extractYouTubeId(url);
     if (!videoId) return null;
@@ -88,6 +106,44 @@ export default function VideoListPage() {
     return match?.[1] ?? '';
   };
 
+  const handleSummarize = async (youtubeUrl: string) => {
+    const videoId = extractYouTubeId(youtubeUrl);
+    if (!videoId) {
+      alert("유효하지 않은 YouTube URL입니다.");
+      return;
+    }
+  
+    try {
+      const res1 = await fetch('/api/youtube-transcript', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ videoId }),
+      });
+      const data1 = await res1.json();
+      if (!res1.ok) {
+        alert("자막 오류: " + data1.error);
+        return;
+      }
+  
+      const res2 = await fetch('/api/summarize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ transcript: data1.transcript }),
+      });
+      const data2 = await res2.json();
+      if (!res2.ok) {
+        alert("요약 실패: " + data2.error);
+        return;
+      }
+  
+      alert("📄 AI 요약 결과:\n\n" + data2.summary);
+    } catch (err) {
+      console.error(err);
+      alert("요약 처리 중 에러가 발생했습니다.");
+    }
+  };
+  
+  
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">
       <h1 className="text-2xl font-bold">Video Gallery</h1>
@@ -122,16 +178,38 @@ export default function VideoListPage() {
               </Link>
               <h2 className="font-semibold">{video.title}</h2>
               <p className="text-sm text-gray-500">{video.createdBy}</p>
+              
+              <div className="mt-2 flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setSelectedVideo(video)}
+                  className="flex items-center gap-1"
+                >
+                  <PlusCircle className="w-4 h-4" />
+                  내 문서에 추가
+                </Button>
 
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setSelectedVideo(video)}
-                className="mt-2 flex items-center gap-1"
-              >
-                <PlusCircle className="w-4 h-4" />
-                Share Video
-              </Button>
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleSummarize(video.url)}
+                  className="flex items-center gap-1"
+                >
+                  <PlusCircle className="w-4 h-4" />
+                  AI 요약
+                </Button>
+
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => handleDelete(video.id)}
+                  className="flex items-center gap-1"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  삭제
+                </Button>
+              </div>
             </div>
           );
         })}
