@@ -44,4 +44,4 @@ service_key.json
 # clerk configuration (can include secrets)
 /.clerk/
 
-firebase.ts
+.firebase.ts
