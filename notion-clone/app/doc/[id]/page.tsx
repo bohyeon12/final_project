@@ -5,8 +5,7 @@ export default async function DocumentPage({
 }: {
   params: { id: string };
 }) {
-  const { id } = await Promise.resolve(params); //params 오류 회피
-
+  const { id } = await Promise.resolve(params);
   return (
     <div className="flex flex-col flex-1 min-h-screen">
       <Document id={id} />

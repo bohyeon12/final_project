@@ -23,7 +23,6 @@ const getYoutubeEmbedUrl = (url: string) => {
 };
 
 export default async function VideoDetailPage({ params }: Props) {
-  // ✅ Next.js 경고 회피용 비동기 패턴
   const { id: videoId } = await Promise.resolve(params);
 
   const docRef = doc(db, "videos", videoId);
