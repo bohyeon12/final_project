@@ -108,20 +108,41 @@ export default function VideoListPage() {
 
   const handleSummarize = async (youtubeUrl: string) => {
     const videoId = extractYouTubeId(youtubeUrl);
-    const res1 = await fetch('/api/youtube-transcript', {
-      method: 'POST',
-      body: JSON.stringify({ videoId }),
-    });
-    const { transcript } = await res1.json();
+    if (!videoId) {
+      alert("유효하지 않은 YouTube URL입니다.");
+      return;
+    }
   
-    const res2 = await fetch('/api/summarize', {
-      method: 'POST',
-      body: JSON.stringify({ transcript }),
-    });
-    const { summary } = await res2.json();
+    try {
+      const res1 = await fetch('/api/youtube-transcript', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ videoId }),
+      });
+      const data1 = await res1.json();
+      if (!res1.ok) {
+        alert("자막 오류: " + data1.error);
+        return;
+      }
   
-    alert(summary); // 또는 모달에 표시
+      const res2 = await fetch('/api/summarize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ transcript: data1.transcript }),
+      });
+      const data2 = await res2.json();
+      if (!res2.ok) {
+        alert("요약 실패: " + data2.error);
+        return;
+      }
+  
+      alert("📄 AI 요약 결과:\n\n" + data2.summary);
+    } catch (err) {
+      console.error(err);
+      alert("요약 처리 중 에러가 발생했습니다.");
+    }
   };
+  
   
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">
@@ -169,6 +190,16 @@ export default function VideoListPage() {
                   내 문서에 추가
                 </Button>
 
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleSummarize(video.url)}
+                  className="flex items-center gap-1"
+                >
+                  <PlusCircle className="w-4 h-4" />
+                  AI 요약
+                </Button>
+
                 <Button
                   variant="destructive"
                   size="sm"
@@ -177,16 +208,6 @@ export default function VideoListPage() {
                 >
                   <Trash2 className="w-4 h-4" />
                   삭제
-                </Button>
-
-                <Button 
-                  variant="destructive"
-                  size="sm"
-                  onClick={() => handleSummarize(video.url)}
-                  className="flex items-center gap-1"
-                >
-                  <PlusCircle className="w-4 h-4" />
-                  AI 요약
                 </Button>
               </div>
             </div>
