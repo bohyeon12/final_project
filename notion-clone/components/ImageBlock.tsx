@@ -1,5 +1,4 @@
 import { createReactBlockSpec } from "@blocknote/react";
-import { BlockNoteSchema } from "@blocknote/core";
 
 export const ImageBlock = createReactBlockSpec(
   {
@@ -26,9 +25,3 @@ export const ImageBlock = createReactBlockSpec(
     },
   }
 );
-
-const schema = BlockNoteSchema.create({
-  blockSpecs: {
-    image: ImageBlock,
-  },
-});
