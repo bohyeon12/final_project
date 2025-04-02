@@ -10,10 +10,8 @@ import {
 } from "@/components/ui/dialog";
 import { useState, useTransition } from "react";
 import { Button } from "./ui/button";
-import { usePathname } from "next/navigation";
 import { toast } from "sonner";
-import { inviteUserToDocument, removeUserFromDocument } from "@/actions/actions";
-import { Input } from "./ui/input";
+import { removeUserFromDocument } from "@/actions/actions";
 import { useUser } from "@clerk/nextjs";
 import { useRoom } from "@liveblocks/react";
 import useOwner from "@/lib/useOwner";
@@ -48,7 +46,6 @@ function ManageUsers() {
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      {/* 버튼에 사용자 수 표시 (예: "User 3") */}
       <Button asChild variant="outline">
         <DialogTrigger>
           {t("manageUsers.userCount")} {usersInRoom?.docs.length || 0}

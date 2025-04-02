@@ -2,7 +2,7 @@
 
 import type { Metadata } from "next"
 import "./globals.css"
-import Providers from "./providers"  // 아래 2)에서 만드는 파일
+import Providers from "./providers" 
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -17,7 +17,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {/* 2)에서 만든 클라이언트 Providers로 감싸주기 */}
         <Providers>{children}</Providers>
       </body>
     </html>

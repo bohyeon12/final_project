@@ -61,7 +61,7 @@ export default function VideoListPage() {
 
     const title = await fetchYoutubeTitle(url);
     if (!title) {
-      alert('유효한 유튜브 URL이 아니거나 제목을 가져올 수 없습니다.');
+      alert('Invalid YouTube URL. Please enter a valid YouTube URL.');
       return;
     }
 
@@ -146,7 +146,7 @@ export default function VideoListPage() {
   
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">
-      <h1 className="text-2xl font-bold">🎥 Video Gallery</h1>
+      <h1 className="text-2xl font-bold">Video Gallery</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <Input
@@ -178,7 +178,7 @@ export default function VideoListPage() {
               </Link>
               <h2 className="font-semibold">{video.title}</h2>
               <p className="text-sm text-gray-500">{video.createdBy}</p>
-
+              
               <div className="mt-2 flex items-center gap-2">
                 <Button
                   variant="outline"
@@ -215,7 +215,6 @@ export default function VideoListPage() {
         })}
       </div>
 
-      {/* 공유용 모달 */}
       {selectedVideo && (
         <VideoShareModal
           open={!!selectedVideo}

@@ -8,7 +8,7 @@ export default async function DocLayout({
   children: React.ReactNode;
   params: { id: string };
 }) {
-  const { id } = await Promise.resolve(params); //params 오류 회피
+  const { id } = await Promise.resolve(params);
 
   return <RoomProvider roomId={id}>{children}</RoomProvider>;
 }

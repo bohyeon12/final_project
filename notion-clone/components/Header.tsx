@@ -16,7 +16,6 @@ function Header() {
 
   return (
     <div className="flex items-center justify-between p-5">
-      {/* 왼쪽: 사용자 이름 */}
       {user && (
         <h1 className="text-xl font-semibold">
           {t("header.userSpace", { name: user.firstName || "User" })}
@@ -29,21 +28,20 @@ function Header() {
           href="/videos"
           className="px-3 py-1 rounded-md bg-gray-200 text-gray-800 hover:bg-gray-300 text-sm font-medium"
         >
-          🎬 Videos
+          Videos
         </Link>
       </div>
 
-      {/* 오른쪽: 언어 선택 + 로그인/유저 버튼 */}
       <div className="flex items-center gap-3">
         <select
           onChange={(e) => changeLanguage(e.target.value)}
           value={i18n.language}
           className="border rounded-md px-2 py-1"
         >
-          <option value="ko">한국어</option>
+          <option value="ko">Korean</option>
           <option value="en">English</option>
-          <option value="ja">日本語</option>
-          <option value="zh">中文</option>
+          <option value="ja">Japanese</option>
+          <option value="zh">Chinese</option>
         </select>
 
         <SignedOut>

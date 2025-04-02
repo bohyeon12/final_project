@@ -60,7 +60,6 @@ function Sidebar() {
     <>
       <NewDocumentButton />
       <div className="flex py-4 flex-col space-y-4 md:max-w-36">
-        {/* 소유 문서 */}
         {groupedData.owner.length === 0 ? (
           <h2 className="text-gray-500 font-semibold text-sm">
             {t("sidebar.noDocument")}
@@ -75,7 +74,6 @@ function Sidebar() {
             ))}
           </>
         )}
-        {/* 공유 문서 */}
         {groupedData.editor.length > 0 && (
           <>
             <h2 className="text-gray-500 font-semibold text-sm">
