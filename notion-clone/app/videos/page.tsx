@@ -6,6 +6,8 @@ import {
   addDoc,
   collection,
   getDocs,
+  query,
+  where,
   Timestamp,
 } from 'firebase/firestore';
 import { useUser } from '@clerk/nextjs';
@@ -33,7 +35,13 @@ export default function VideoListPage() {
   const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
 
   const fetchVideos = async () => {
-    const snapshot = await getDocs(collection(db, 'videos'));
+    if (!user) return;
+
+    const q = query(
+      collection(db, 'videos'),
+      where('createdBy', '==', user.emailAddresses[0].emailAddress)
+    );
+    const snapshot = await getDocs(q);
     const data = snapshot.docs.map((doc) => ({
       id: doc.id,
       ...(doc.data() as Omit<Video, 'id'>),
@@ -42,8 +50,8 @@ export default function VideoListPage() {
   };
 
   useEffect(() => {
-    fetchVideos();
-  }, []);
+    if (user) fetchVideos();
+  }, [user]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
