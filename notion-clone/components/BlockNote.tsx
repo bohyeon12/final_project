@@ -10,7 +10,7 @@ import { YouTubeBlock } from "./YouTubeBlock";
 import { ImageBlock } from "./ImageBlock";
 import { BlockNoteView } from "@blocknote/shadcn";
 import { deleteImage, handleImageUpload } from "@/actions/actions";
-import { YoutubeTimestamp } from "./YoutubeTimestamp"; // 추가된 YoutubeTimestamp 컴포넌트
+import { YoutubeTimestamp } from "./YoutubeTimestamp"; // 추�???�� YoutubeTimestamp 컴포?��?��
 
 type EditorProps = {
   doc: Y.Doc;
@@ -61,7 +61,7 @@ function BlockNote({
         ...defaultBlockSpecs,
         youtube: YouTubeBlock,
         image: ImageBlock,
-        youtubetimestamp: YoutubeTimestamp, // YoutubeTimestamp 블록 추가
+        youtubetimestamp: YoutubeTimestamp,
       },
     }),
   });
@@ -231,32 +231,33 @@ function BlockNote({
 
   const hasInserted = useRef(false);
 
-  useEffect(() => {
-    if (
-      youtubeUrlForInsert &&
-      editor &&
-      onYoutubeInserted &&
-      !hasInserted.current
-    ) {
-      const timeout = setTimeout(() => {
-        editor.insertBlocks(
-          [
-            {
-              type: "youtube",
-              props: { url: youtubeUrlForInsert },
-            },
-          ],
-          editor.getTextCursorPosition().block,
-          "after"
-        );
-        hasInserted.current = true;
-        onYoutubeInserted();
-      }, 100);
+useEffect(() => {
+  if (
+    youtubeUrlForInsert &&
+    editor &&
+    onYoutubeInserted &&
+    !hasInserted.current
+  ) {
+    const timeout = setTimeout(() => {
+      editor.insertBlocks(
+        [
+          {
+            type: "youtube",
+            props: { url: youtubeUrlForInsert },
+          },
+        ],
+        editor.getTextCursorPosition().block,
+        "after"
+      );
+      hasInserted.current = true;
+      onYoutubeInserted();
+    }, 100);
 
-      return () => clearTimeout(timeout);
-    }
-  }, [youtubeUrlForInsert, editor, onYoutubeInserted]);
+    return () => clearTimeout(timeout);
+  }
+}, [youtubeUrlForInsert, editor, onYoutubeInserted]);
 
+  
   return (
     <div className="relative max-w-6xl mx-auto">
       <canvas
@@ -301,7 +302,7 @@ function BlockNote({
             const youtubeTimestampItem = {
               title: "YouTube Timestamp",
               onItemClick: () => {
-                const url = prompt("불러올 URL을 입력하세요.");
+                const url = prompt("Enter YouTube URL:");
                 if (url) {
                   editor.insertBlocks(
                     [
@@ -330,8 +331,7 @@ function BlockNote({
 
                   const blockId = crypto.randomUUID();
                   try {
-                    const compressedBase64 = await compressImage(file);
-                    const result = await handleImageUpload(compressedBase64, room.id, blockId);
+                    const result = await handleImageUpload(file, room.id, blockId);
 
                     if (result) {
                       editor.insertBlocks(
@@ -350,7 +350,7 @@ function BlockNote({
                     }
                   } catch (error) {
                     console.error("Error uploading image:", error);
-                    alert("Failed to upload image. Please try a smaller image or try again.");
+                    alert("Failed to upload image. Please try again.");
                   }
                 };
 
