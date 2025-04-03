@@ -3,6 +3,8 @@
 import { adminDb } from "@/firebase-admin";
 import liveblocks from "@/lib/liveblocks";
 import { auth } from "@clerk/nextjs/server";
+import { storage } from "@/firebase";
+import { ref, uploadBytes, deleteObject, getDownloadURL } from "firebase/storage";
 
 export async function createNewDocument() {
   auth.protect();
@@ -105,34 +107,57 @@ export async function removeUserFromDocument(roomId: string, email: string) {
 }
 
 export async function handleImageUpload(
-  base64Image: string,
+  file: File,
   roomId: string,
   blockId: string
 ): Promise<string | null> {
   try {
-    // Validate base64 string size (1MB limit)
-    const base64Size = Math.ceil((base64Image.length - 'data:image/jpeg;base64,'.length) * 0.75);
-    if (base64Size > 1024 * 1024) { // 1MB in bytes
-      throw new Error("Image size exceeds 1MB limit");
-    }
+    // Create a reference to the image in Firebase Storage
+    const imageRef = ref(storage, `images/${roomId}/${blockId}`);
     
+    // Upload the file directly to Firebase Storage
+    await uploadBytes(imageRef, file);
+    
+    // Get the download URL
+    const downloadURL = await getDownloadURL(imageRef);
+    
+    // Store metadata in Firestore
     await adminDb.collection("images").doc(blockId).set({
-      fileName: `image-${blockId}`,
-      imageData: base64Image,
+      fileName: file.name,
+      imageUrl: downloadURL,
       createdAt: new Date(),
       roomId: roomId,
+      contentType: file.type,
+      size: file.size,
     }, { merge: true });
 
-    return base64Image;
+    return downloadURL;
   } catch (error) {
     console.error("Image upload failed:", error);
-    return null;
+    throw error; // Re-throw to handle error in caller
   }
 }
 
 export async function deleteImage(blockId: string) {
   try {
+    // Get the image document from Firestore
+    const imageDoc = await adminDb.collection("images").doc(blockId).get();
+    if (!imageDoc.exists) {
+      return { success: false };
+    }
+
+    const imageData = imageDoc.data();
+    if (!imageData) {
+      return { success: false };
+    }
+
+    // Delete from Firebase Storage
+    const imageRef = ref(storage, `images/${imageData.roomId}/${blockId}`);
+    await deleteObject(imageRef);
+
+    // Delete from Firestore
     await adminDb.collection("images").doc(blockId).delete();
+    
     return { success: true };
   } catch (error) {
     console.error("Error deleting image:", error);
@@ -146,16 +171,28 @@ export async function deleteAllImagesInDocument(roomId: string) {
       .collection("images")
       .where("roomId", "==", roomId)
       .get();
+      
     if (query.empty) {
-      console.log(`?? No images found for roomId: ${roomId}`);
+      console.log(`No images found for roomId: ${roomId}`);
       return { success: true };
     }
+
     const batch = adminDb.batch();
+    const deletePromises: Promise<void>[] = [];
+
     // Delete all images associated with the document
     query.docs.forEach((doc) => {
+      const imageData = doc.data();
+      // Delete from Firebase Storage
+      const imageRef = ref(storage, `images/${roomId}/${doc.id}`);
+      deletePromises.push(deleteObject(imageRef));
+      // Delete from Firestore
       batch.delete(doc.ref);
     });
 
+    // Wait for all storage deletions to complete
+    await Promise.all(deletePromises);
+    // Commit the Firestore batch
     await batch.commit();
 
     return { success: true };

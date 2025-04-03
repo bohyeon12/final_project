@@ -29,7 +29,7 @@ function Editor() {
 
   const searchParams = useSearchParams();
   const youtubeUrl = searchParams.get("youtube");
-  const [youtubeInserted, setYoutubeInserted] = useState(false); // 중복 삽입 방지용
+  const [youtubeInserted, setYoutubeInserted] = useState(false);
 
   useEffect(() => {
     const yDoc = new Y.Doc();

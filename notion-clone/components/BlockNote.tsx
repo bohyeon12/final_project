@@ -229,32 +229,31 @@ function BlockNote({
 
   const hasInserted = useRef(false);
 
-useEffect(() => {
-  if (
-    youtubeUrlForInsert &&
-    editor &&
-    onYoutubeInserted &&
-    !hasInserted.current
-  ) {
-    // ✅ 에디터가 mount 후 ready일 때만 삽입
-    const timeout = setTimeout(() => {
-      editor.insertBlocks(
-        [
-          {
-            type: "youtube",
-            props: { url: youtubeUrlForInsert },
-          },
-        ],
-        editor.getTextCursorPosition().block,
-        "after"
-      );
-      hasInserted.current = true;
-      onYoutubeInserted(); // URL 초기화
-    }, 100); // 조금 늦춰서 실행
+  useEffect(() => {
+    if (
+      youtubeUrlForInsert &&
+      editor &&
+      onYoutubeInserted &&
+      !hasInserted.current
+    ) {
+      const timeout = setTimeout(() => {
+        editor.insertBlocks(
+          [
+            {
+              type: "youtube",
+              props: { url: youtubeUrlForInsert },
+            },
+          ],
+          editor.getTextCursorPosition().block,
+          "after"
+        );
+        hasInserted.current = true;
+        onYoutubeInserted(); 
+      }, 100);
 
-    return () => clearTimeout(timeout);
-  }
-}, [youtubeUrlForInsert, editor, onYoutubeInserted]);
+      return () => clearTimeout(timeout);
+    }
+  }, [youtubeUrlForInsert, editor, onYoutubeInserted]);
 
   
   return (
@@ -311,8 +310,7 @@ useEffect(() => {
 
                   const blockId = crypto.randomUUID();
                   try {
-                    const compressedBase64 = await compressImage(file);
-                    const result = await handleImageUpload(compressedBase64, room.id, blockId);
+                    const result = await handleImageUpload(file, room.id, blockId);
 
                     if (result) {
                       editor.insertBlocks(
@@ -331,7 +329,7 @@ useEffect(() => {
                     }
                   } catch (error) {
                     console.error("Error uploading image:", error);
-                    alert("Failed to upload image. Please try a smaller image or try again.");
+                    alert("Failed to upload image. Please try again.");
                   }
                 };
 
