@@ -138,33 +138,6 @@ export async function handleImageUpload(
   }
 }
 
-export async function deleteImage(blockId: string) {
-  try {
-    // Get the image document from Firestore
-    const imageDoc = await adminDb.collection("images").doc(blockId).get();
-    if (!imageDoc.exists) {
-      return { success: false };
-    }
-
-    const imageData = imageDoc.data();
-    if (!imageData) {
-      return { success: false };
-    }
-
-    // Delete from Firebase Storage
-    const imageRef = ref(storage, `images/${imageData.roomId}/${blockId}`);
-    await deleteObject(imageRef);
-
-    // Delete from Firestore
-    await adminDb.collection("images").doc(blockId).delete();
-    
-    return { success: true };
-  } catch (error) {
-    console.error("Error deleting image:", error);
-    return { success: false };
-  }
-}
-
 export async function deleteAllImagesInDocument(roomId: string) {
   try {
     const query = await adminDb

@@ -96,7 +96,7 @@ export const YouTubeBlock = createReactBlockSpec(
                     />
                 </div>
                 <div 
-                    className="absolute bottom-0 right-0 w-6 h-6 bg-blue-500 cursor-se-resize rounded-full opacity-100 hover:opacity-100 transition-opacity"
+                    className="absolute right-0 top-0 bottom-0 w-1 bg-gray-300 opacity-0 group-hover:opacity-100 cursor-ew-resize"
                     onMouseDown={handleResizeStart}
                 />
             </div>

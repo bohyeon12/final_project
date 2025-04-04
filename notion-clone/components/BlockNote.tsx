@@ -9,8 +9,8 @@ import { useRoom, useSelf } from "@liveblocks/react";
 import { YouTubeBlock } from "./YouTubeBlock";
 import { ImageBlock } from "./ImageBlock";
 import { BlockNoteView } from "@blocknote/shadcn";
-import { deleteImage, handleImageUpload } from "@/actions/actions";
-import { YoutubeTimestamp } from "./YoutubeTimestamp"; // ì¶”ê???œ YoutubeTimestamp ì»´í¬?„Œ?Š¸
+import { handleImageUpload } from "@/actions/actions";
+import { YoutubeTimestamp } from "./YoutubeTimestamp";
 
 type EditorProps = {
   doc: Y.Doc;
@@ -75,15 +75,6 @@ function BlockNote({
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-
-    editor._tiptapEditor.on("transaction", ({ editor }) => {
-      const removedBlocks = editor.getJSON().content?.filter(
-        (block) => block.type === "live-image" && block.attrs?.url
-      );
-      removedBlocks?.forEach((block) => {
-        deleteImage(block.id);
-      });
-    });
 
     const resizeCanvas = () => {
       const parent = canvas.parentElement;
@@ -188,45 +179,6 @@ function BlockNote({
     }
     setCurrentStroke({ points: [] });
     setDrawing({ ...drawing, isDrawing: false });
-  };
-
-  const compressImage = async (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = (event) => {
-        const img = new Image();
-        img.src = event.target?.result as string;
-        img.onload = () => {
-          const canvas = document.createElement("canvas");
-          const ctx = canvas.getContext("2d");
-          if (!ctx) {
-            reject(new Error("Could not get canvas context"));
-            return;
-          }
-
-          let width = img.width;
-          let height = img.height;
-          const maxSize = 800;
-          if (width > height && width > maxSize) {
-            height = Math.round((height * maxSize) / width);
-            width = maxSize;
-          } else if (height > maxSize) {
-            width = Math.round((width * maxSize) / height);
-            height = maxSize;
-          }
-
-          canvas.width = width;
-          canvas.height = height;
-          ctx.drawImage(img, 0, 0, width, height);
-
-          const base64 = canvas.toDataURL("image/jpeg", 0.7);
-          resolve(base64);
-        };
-        img.onerror = reject;
-      };
-      reader.onerror = reject;
-    });
   };
 
   const hasInserted = useRef(false);
@@ -355,6 +307,7 @@ useEffect(() => {
                 };
 
                 input.click();
+
               },
             };
             return filterSuggestionItems(
