@@ -122,13 +122,14 @@ export async function handleImageUpload(
     const downloadURL = await getDownloadURL(imageRef);
     
     // Store metadata in Firestore
-    await adminDb.collection("images").doc(roomId).set({
+    await adminDb.collection("images").doc(roomId).collection("blocks").doc(blockId).set({
       fileName: file.name,
       imageUrl: downloadURL,
       createdAt: new Date(),
-      roomId: roomId,
       contentType: file.type,
       size: file.size,
+      blockId: blockId,
+      width: 640,
     }, { merge: true });
 
     return downloadURL;
@@ -140,26 +141,28 @@ export async function handleImageUpload(
 
 export async function deleteAllImagesInDocument(roomId: string) {
   try {
-    const query = await adminDb
+    const batch = adminDb.batch();
+    const deletePromises: Promise<void>[] = [];
+
+    // Get all blocks in the specific room
+    const blocksSnapshot = await adminDb
       .collection("images")
-      .where("roomId", "==", roomId)
+      .doc(roomId)
+      .collection("blocks")
       .get();
-      
-    if (query.empty) {
+
+    if (blocksSnapshot.empty) {
       console.log(`No images found for roomId: ${roomId}`);
       return { success: true };
     }
 
-    const batch = adminDb.batch();
-    const deletePromises: Promise<void>[] = [];
-
-    // Delete all images associated with the document
-    query.docs.forEach((doc) => {
+    // Delete all blocks and their storage references
+    blocksSnapshot.docs.forEach((doc) => {
       const imageData = doc.data();
-      // Delete from Firebase Storage
-      const imageRef = ref(storage, `images/${roomId}/${doc.id}`);
-      deletePromises.push(deleteObject(imageRef));
-      // Delete from Firestore
+      if (imageData.imageUrl) {
+        const imageRef = ref(storage, `images/${roomId}/${doc.id}`);
+        deletePromises.push(deleteObject(imageRef));
+      }
       batch.delete(doc.ref);
     });
 
@@ -168,9 +171,51 @@ export async function deleteAllImagesInDocument(roomId: string) {
     // Commit the Firestore batch
     await batch.commit();
 
+    // Delete the room document itself
+    await adminDb.collection("images").doc(roomId).delete();
+
     return { success: true };
   } catch (error) {
     console.error("Error deleting images:", error);
     return { success: false };
   }
 }
+
+export async function getImageWidth(roomId: string, blockId: string) {
+  try {
+    const docRef = adminDb.collection("images").doc(roomId).collection("blocks").doc(blockId);
+    const doc = await docRef.get();
+    
+    if (!doc.exists) {
+      console.log(`No image found for roomId: ${roomId}, blockId: ${blockId}`);
+      return 640; // Return default width if document doesn't exist
+    }
+    
+    const data = doc.data();
+    return data?.width || 640; // Return stored width or default if not set
+  } catch (error) {
+    console.error("Error getting image width:", error);
+    return 640; // Return default width on error
+  }
+}
+
+export async function updateImageWidth(roomId: string, blockId: string, width: number) {
+  try {
+    const docRef = adminDb.collection("images").doc(roomId).collection("blocks").doc(blockId);
+    const doc = await docRef.get();
+    
+    if (!doc.exists) {
+      console.log(`No image found for roomId: ${roomId}, blockId: ${blockId}`);
+      return { success: false };
+    }
+    
+    await docRef.update({
+      width: width
+    });
+    return { success: true };
+  } catch (error) {
+    console.error("Error updating image width:", error);
+    return { success: false };
+  }
+}
+  

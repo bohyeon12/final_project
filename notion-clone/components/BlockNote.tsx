@@ -293,6 +293,7 @@ useEffect(() => {
                             props: {
                               imageUrl: result,
                               blockId: blockId,
+                              roomId: room.id,
                             },
                           },
                         ],

@@ -1,5 +1,7 @@
+import { getImageWidth, updateImageWidth } from "@/actions/actions";
 import { createReactBlockSpec } from "@blocknote/react";
 import { useEffect, useRef, useState } from "react";
+
 
 export const ImageBlock = createReactBlockSpec(
   {
@@ -7,6 +9,7 @@ export const ImageBlock = createReactBlockSpec(
     propSchema: {
       imageUrl: { default: "" },
       blockId: { default: "" },
+      roomId: { default: "" },
     },
     content: "none",
   },
@@ -16,22 +19,18 @@ export const ImageBlock = createReactBlockSpec(
       const [isResizing, setIsResizing] = useState(false);
       const [startX, setStartX] = useState(0);
       const [startWidth, setStartWidth] = useState(0);
-      const [width, setWidth] = useState(imageRef.current ? imageRef.current.width : 640);
-      const [ratio, setRatio] = useState(9/16);
+      const [width, setWidth] = useState(640); // Default width
 
-      const handleImageLoad = () => {
-        if (imageRef.current) {
-          const { naturalWidth, naturalHeight } = imageRef.current;
-          setRatio(naturalHeight / naturalWidth);
-          if(naturalWidth > 640) {
-            setWidth(640);
-          } else if(naturalHeight > 360){
-            setWidth(360 / ratio);
-          } else {
-            setWidth(naturalWidth);
+      // Load the width from Firebase when the component mounts
+      useEffect(() => {
+        const loadWidth = async () => {
+          const storedWidth = await getImageWidth(block.props.roomId, block.props.blockId);
+          if (storedWidth) {
+            setWidth(storedWidth);
           }
-        }
-      };
+        };
+        loadWidth();
+      }, [block.props.roomId, block.props.blockId]);
 
       const handleResizeStart = (e: React.MouseEvent) => {
         setIsResizing(true);
@@ -39,25 +38,20 @@ export const ImageBlock = createReactBlockSpec(
         if (imageRef.current) {
           setStartWidth(imageRef.current.offsetWidth);
         }
-    };
+      };
 
       const handleResizeMove = (e: MouseEvent) => {
         if (!isResizing || !imageRef.current) return;
         
         const diff = e.clientX - startX;
-        const newWidth = Math.max(160, Math.min(1280, startWidth + diff));
-        const newHeight = Math.round(newWidth * ratio);
-        if (newWidth > 1024) {
-          setWidth(1024);
-          //setHeight(1024 * ratio);
-        } else {
-          setWidth(newWidth);
-          //setHeight(newHeight);
-        }
+        const newWidth = Math.max(160, Math.min(1024, startWidth + diff));
+        setWidth(newWidth);
       };
 
-      const handleResizeEnd = () => {
+      const handleResizeEnd = async () => {
         setIsResizing(false);
+        // Save the new width to Firebase
+        await updateImageWidth(block.props.roomId, block.props.blockId, width);
       };
 
       useEffect(() => {
@@ -67,14 +61,14 @@ export const ImageBlock = createReactBlockSpec(
         }
 
         return () => {
-            window.removeEventListener('mousemove', handleResizeMove);
-            window.removeEventListener('mouseup', handleResizeEnd);
+          window.removeEventListener('mousemove', handleResizeMove);
+          window.removeEventListener('mouseup', handleResizeEnd);
         };
-    }, [isResizing, startX, startWidth]);
+      }, [isResizing, startX, startWidth, width]);
     
 
       return (
-        <div className="relative w-full" style={{ width}}>
+        <div className="relative w-full" style={{ width }}>
           {block.props.imageUrl && (
             <img
               ref={imageRef}
@@ -82,7 +76,6 @@ export const ImageBlock = createReactBlockSpec(
               alt="Uploaded content"
               className="max-w-full h-auto"
               style={{ width }}
-              onLoad={handleImageLoad}
             />
           )}
           <div 
