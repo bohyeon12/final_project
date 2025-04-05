@@ -19,6 +19,7 @@ import Link from 'next/link';
 import { PlusCircle, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import VideoShareModal from '@/components/ui/VideoShareModal';
+import { Sparkles } from "lucide-react"
 
 type Video = {
   id: string;
@@ -105,44 +106,6 @@ export default function VideoListPage() {
     const match = url.match(regExp);
     return match?.[1] ?? '';
   };
-
-  const handleSummarize = async (youtubeUrl: string) => {
-    const videoId = extractYouTubeId(youtubeUrl);
-    if (!videoId) {
-      alert("유효하지 않은 YouTube URL입니다.");
-      return;
-    }
-  
-    try {
-      const res1 = await fetch('/api/youtube-transcript', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ videoId }),
-      });
-      const data1 = await res1.json();
-      if (!res1.ok) {
-        alert("자막 오류: " + data1.error);
-        return;
-      }
-  
-      const res2 = await fetch('/api/summarize', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ transcript: data1.transcript }),
-      });
-      const data2 = await res2.json();
-      if (!res2.ok) {
-        alert("요약 실패: " + data2.error);
-        return;
-      }
-  
-      alert("📄 AI 요약 결과:\n\n" + data2.summary);
-    } catch (err) {
-      console.error(err);
-      alert("요약 처리 중 에러가 발생했습니다.");
-    }
-  };
-  
   
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">
@@ -190,13 +153,13 @@ export default function VideoListPage() {
                   내 문서에 추가
                 </Button>
 
-                <Button 
+                <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => handleSummarize(video.url)}
+                  onClick={() => router.push(`/videos/summary/${video.id}`)}
                   className="flex items-center gap-1"
                 >
-                  <PlusCircle className="w-4 h-4" />
+                  <Sparkles className="w-4 h-4" />
                   AI 요약
                 </Button>
 
